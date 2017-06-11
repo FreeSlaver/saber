@@ -1,5 +1,6 @@
-# Object file
-*.o
+.idea
+saber.iml
+test.txt
+.gitignore
+*.class
 
-# Ada Library Information
-*.ali
