@@ -1,0 +1,7 @@
+主页那张2个人的图
+//assetcdn.500px.org/assets/home/home_cover-22d4c02977bbe00636e22f9aa653bd84.jpg
+星空广告的图
+//assetcdn.500px.org/assets/home/thumbnail-aa880f2d4f8fa67d181740827c078758.png
+
+图片的大小，2048是最好的
+PHOTO_GRID_IMAGE_SIZES: ["1", "2", "32", "31", "33", "34", "35", "36", "2048", "4", "14"],

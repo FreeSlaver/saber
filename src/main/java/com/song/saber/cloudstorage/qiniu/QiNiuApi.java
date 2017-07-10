@@ -6,13 +6,19 @@ import com.qiniu.http.Client;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
+import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.FileInfo;
 import com.qiniu.storage.model.FileListing;
 import com.qiniu.util.Auth;
 import com.qiniu.util.Json;
 import com.qiniu.util.StringMap;
+import com.qiniu.util.StringUtils;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by 00013708 on 2017/6/11.
@@ -22,80 +28,155 @@ import java.util.List;
  * 我草，这自动化，感觉屌炸天啊。
  */
 public class QiNiuApi {
+  private static final Logger logger = LoggerFactory.getLogger(QiNiuApi.class);
   //设置需要操作的账号的AK和SK
   private static final String ACCESS_KEY = "iW0qYJJiTzAzo6tK3XT0_PCcPcAtWXyvwgsd5Ed3";
   private static final String SECRET_KEY = "lQIyvnubqZ-ZNTjgRJuZ5ZEPAXrVHR2oYiZngd4a";
 
-  private static final String GET_DOMAIN_PREFIX = "http://api.qiniu.com/v6/domain/list?tbl=";
+  private static final String GET_DOMAIN = "http://api.qiniu.com/v6/domain/list?tbl=";
+  private static final String CREATE_BUCKET = "http://rs.qiniu.com/mkbucket";
 
   private static Auth auth() {
     return Auth.create(ACCESS_KEY, SECRET_KEY);
   }
 
+  private static Configuration getConfig() {
+    Zone z = Zone.zone0();
+    return new Configuration(z);
+  }
+
+  /**
+   * 获取外链的域名
+   */
   public static String getDomain(String bucketName) {
-    String url = GET_DOMAIN_PREFIX + bucketName;
+    String url = GET_DOMAIN + bucketName;
     StringMap stringMap = auth().authorization(url);
 
-    Zone z = Zone.zone2();
-    Configuration c = new Configuration(z);
-
-    Client client = new Client(c.clone());
     try {
-      Response response = client.get(url, stringMap);
-      boolean isJson = response.isJson();
+      Response response = executeHttpRequest(url, stringMap, null, "get");
       String body = response.bodyString();
-      //List<String> body = response.jsonToObject(String[].class);
-      String[] strs = Json.decode(body,String[].class);
-      //String defaultDomain = body.split(",")[0];
+      String[] strs = Json.decode(body, String[].class);
       return strs[0];
     } catch (QiniuException e) {
       e.printStackTrace();
+      //logger.error(e.getMessage(), e);
     }
     return null;
   }
 
-  //获取空间下的所有文件外链
+  public static String getExternalLink(String domain, String fileName) {
+    StringBuilder sb = new StringBuilder("http://");
+    sb.append(domain).append("/").append(fileName);
+    return sb.toString();
+  }
+
+  /**
+   * 获取空间下的所有文件外链
+   *
+   * @param bucketName 空间名
+   */
   public static List<String> getExternalLinks(String bucketName) {
     String domain = getDomain(bucketName);
-    Zone z = Zone.zone0();
-    Configuration config = new Configuration(z);
 
-    //实例化一个BucketManager对象
+    Configuration config = getConfig();
+
     BucketManager bucketManager = new BucketManager(auth(), config);
-
     try {
-      //调用listFiles方法列举指定空间的指定文件
-      //参数一：bucket    空间名
-      //参数二：prefix    文件名前缀
-      //参数三：marker    上一次获取文件列表时返回的 marker
-      //参数四：limit     每次迭代的长度限制，最大1000，推荐值 100
-      //参数五：delimiter 指定目录分隔符，列出所有公共前缀（模拟列出目录效果）。缺省值为空字符串
       FileListing fileListing = bucketManager.listFiles(bucketName, null, null, 1000, null);
       FileInfo[] items = fileListing.items;
       List<String> externalLinkList = new ArrayList<String>();
       for (FileInfo fileInfo : items) {
-        //http://orbzynzxu.bkt.clouddn.com也就是这个外链，然后拼接文件名
-        //System.out.println(fileInfo.key);
         String fileName = fileInfo.key;
-        StringBuilder sb = new StringBuilder("http://");
-        sb.append(domain).append("/").append(fileName);
-        externalLinkList.add(sb.toString());
-        System.out.println(sb.toString());
+        externalLinkList.add(getExternalLink(domain, fileName));
       }
       return externalLinkList;
     } catch (QiniuException e) {
       //捕获异常信息
       Response r = e.response;
       System.out.println(r.toString());
+      //logger.info(r.toString());
     }
     return null;
   }
 
-  public static void main(String[] args) {
-    //travel使用这个为毛不行？
-    String bucketName = "guizhou";
-    List<String> links = getExternalLinks(bucketName);
+  /**
+   * 创建一个空间
+   *
+   * @param bucketName 空间名，需要进行base64编码(v2才要) 日尼玛V2版本的用不了 这调用会覆盖掉原来已经有的吗
+   */
+  public static boolean createBucket(String bucketName) {
+    if (StringUtils.isNullOrEmpty(bucketName)) {
+      throw new IllegalArgumentException("bucketName null");
+    }
+    StringBuilder sb = new StringBuilder(CREATE_BUCKET);
+    sb.append("/").append(bucketName).append("/public/0");
+
+    String url = sb.toString();
+    StringMap stringMap = auth().authorization(url);
+    Response response = executeHttpRequest(url, stringMap, null, "get");
+    System.out.println(response.toString());
+    return response.isOK();
+  }
+
+  private static Response executeHttpRequest(String url, StringMap headers, String body,
+      String httpMethod) {
+    Configuration c = getConfig();
+    Client client = new Client(c.clone());
+    try {
+      return httpMethod.equalsIgnoreCase("get") ? client.get(url, headers)
+          : client.post(url, body, headers);
+    } catch (QiniuException e) {
+      Response response = e.response;
+      System.out.println(response.toString());
+    }
+    return null;
+  }
+
+  public static void upload(String bucketName, File file) throws QiniuException {
+    List<File> files = Arrays.asList(file);
+    batchUpload(bucketName, files);
+  }
+
+  public static void batchUpload(String bucketName, List<File> files) throws QiniuException {
+    Configuration c = getConfig();
+
+    Auth auth = auth();
+    String upToken = auth.uploadToken(bucketName);
+
+    //创建上传对象
+    UploadManager uploadManager = new UploadManager(c);
+    Response res = null;
+    for (File file : files) {
+      try {
+        Response response = uploadManager.put(file, file.getName(), upToken);
+        System.out.println(response.toString());
+      } catch (QiniuException e) {
+        e.printStackTrace();
+        Response response = e.response;
+        System.out.println(response.toString());
+        throw e;
+      }
+    }
+  }
+
+  public static void main(String[] args) throws QiniuException {
+    //String bucketName = "guizhou";
+    //List<String> links = getExternalLinks(bucketName);
 
     //System.out.println(Arrays.toString(links.toArray()));
+
+    //boolean result = createBucket("test");
+    //System.out.println(result);
+
+    testBatchUpload();
+  }
+
+  public static void testBatchUpload() throws QiniuException {
+    //boolean result = createBucket("test");
+    String bucketName = "test";
+    String picDirStr = "E:\\Dropbox\\picture\\blog";
+    File picDir = new File(picDirStr);
+    File[] pictures = picDir.listFiles();
+    batchUpload(bucketName, Arrays.asList(pictures));
   }
 }
