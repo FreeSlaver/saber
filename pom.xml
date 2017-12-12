@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.hierynomus</groupId>
       <artifactId>sshj</artifactId>
-      <version>0.21.1</version>
+      <version>0.21.1</version>`
     </dependency>
 
     <!--excel-->
@@ -36,12 +36,26 @@
       <version>3.16</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.freaknet.gtrends</groupId>
+      <artifactId>j-google-trends-api</artifactId>
+      <version>1.5.5</version>
+    </dependency>
+
     <!--common tools-->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.5</version>
     </dependency>
+
+    
+    <dependency>
+      <groupId>commons-net</groupId>
+      <artifactId>commons-net</artifactId>
+      <version>3.3</version>
+    </dependency>
+
 
     <!-- cloudstorage 云存储-->
     <!-- 七牛云存储sdk-->
@@ -113,6 +127,8 @@
       <artifactId>examples</artifactId>
       <version>${bt.version}</version>
     </dependency>
+
+
 
 
 
