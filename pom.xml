@@ -36,11 +36,11 @@
       <version>3.16</version>
     </dependency>
 
-    <dependency>
+   <!-- <dependency>
       <groupId>org.freaknet.gtrends</groupId>
       <artifactId>j-google-trends-api</artifactId>
       <version>1.5.5</version>
-    </dependency>
+    </dependency>-->
 
     <!--common tools-->
     <dependency>
