@@ -88,7 +88,8 @@ public class HttpUtil {
     public static String get(String url) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet get = new HttpGet(url);
-        get.addHeader("Content-Type", CONTENT_TYPE_JSON);
+//        get.addHeader("Content-Type", CONTENT_TYPE_JSON);
+        get.addHeader("Cookie","pgv_pvi=8133557248; pgv_si=s3016792064; ptisp=ctc; ptui_loginuin=504252262@qq.com; pt2gguin=o0504252262; uin=o0504252262; RK=bPoBkqt1Yc; ptcz=900268fea33855be892e79f69a99b5c4a16e49e837313e1e3820d46393baeb58; pgv_info=ssid=s2378023107; pgv_pvid=4647790353; _qpsvr_localtk=0.7613129162328691; skey=@2JEDMueMS; p_uin=o0504252262; Loading=Yes; QZ_FE_WEBP_SUPPORT=1; __Q_w_s_hat_seed=1; __Q_w_s__QZN_TodoMsgCnt=1; pt4_token=ZH58twV4XDiyDhL74yU*J8GRDATwTzzNf7PO8rNXSSw_; p_skey=JZYfGOps2U7R1lvO0bm6vukisGGDyFfDe5hWR9OltBY_; qz_screen=1920x1080; cpu_performance_v8=21; midas_openid=504252262; midas_openkey=@2JEDMueMS");
 
         HttpEntity respEntity = null;
         try {
@@ -116,6 +117,7 @@ public class HttpUtil {
             EntityUtils.consume(respEntity);
         }
     }
+
 
     public static String postForm(String url, Map<String, String> nameValuePair) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
