@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<List ListName="默认列表">
+    <File>
+        <MediaFileType>0</MediaFileType>
+        <FileName>邓紫棋 - 泡沫.mp3</FileName>
+        <FilePath>.</FilePath>
+        <FileSize>4186975</FileSize>
+        <Duration>258000</Duration>
+        <Hash>36542b20231db1633eea72f7d6b27492</Hash>
+        <Lyric>F:\KuGou\Lyric\邓紫棋 - 泡沫-36542b20231db1633eea72f7d6b27492.krc</Lyric>
+        <Bitrate>128000</Bitrate>
+        <MandatoryBitrate>0</MandatoryBitrate>
+    </File>
+    <File>
+        <MediaFileType>0</MediaFileType>
+        <FileName>灌篮高手 - 好想大声说我爱你.mp3</FileName>
+        <FilePath>.</FilePath>
+        <FileSize>1618124</FileSize>
+        <Duration>231000</Duration>
+        <Hash>34e31be84ce3d7c0cfad66e28c0b8220</Hash>
+        <Lyric>F:\KuGou\Lyric\灌篮高手 - 好想大声说我爱你-34e31be84ce3d7c0cfad66e28c0b8220.krc</Lyric>
+        <Bitrate>56000</Bitrate>
+        <MandatoryBitrate>128000</MandatoryBitrate>
+    </File>
+    <File>
+        <MediaFileType>0</MediaFileType>
+        <FileName>筷子兄弟 - 小苹果.mp3</FileName>
+        <FilePath>.</FilePath>
+        <FileSize>3382542</FileSize>
+        <Duration>211000</Duration>
+        <Hash>fcd49446e26461d95433e9eea5c7a790</Hash>
+        <Lyric>F:\KuGou\Lyric\筷子兄弟 - 小苹果-fcd49446e26461d95433e9eea5c7a790.krc</Lyric>
+        <Bitrate>128000</Bitrate>
+        <MandatoryBitrate>128000</MandatoryBitrate>
+    </File>
+</List>
